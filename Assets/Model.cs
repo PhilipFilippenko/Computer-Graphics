@@ -4,7 +4,7 @@ using UnityEngine;
 public class Model
 {
     private List<Vector2> texture_coordinates;
-    private List<Vector3> vertices;
+    internal List<Vector3> vertices;
     private List<Vector3Int> faces;
     private List<Vector3Int> texture_index_list;
     private List<Vector3> normals;
@@ -14,8 +14,6 @@ public class Model
         DefineVertices();
         DefineFaces();
         DefineUVs();
-
-        CreateUnityGameObject();
     }
 
     private void DefineVertices()
@@ -356,7 +354,7 @@ public class Model
     };
     }
 
-    private GameObject CreateUnityGameObject()
+    internal GameObject CreateUnityGameObject()
     {
         Mesh mesh = new Mesh();
         GameObject newGO = new GameObject();
