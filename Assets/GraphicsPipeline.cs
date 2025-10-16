@@ -26,14 +26,38 @@ public class GraphicsPipeline : MonoBehaviour
         Matrix4x4 scaleMatrix = Matrix4x4.TRS(Vector3.zero, Quaternion.identity, new Vector3(20, 5, 5));
         WriteMatrixToFile(scaleMatrix, "Scale Matrix", "------------------");
 
-        var imageAfterScale = ApplyTransformation(verts, scaleMatrix);
+        var imageAfterScale = ApplyTransformation(imageAfterRotation, scaleMatrix);
         WriteVectorsToFile(imageAfterScale, "Image after Scale", "------------------");
 
         Matrix4x4 translationMatrix = Matrix4x4.TRS(new Vector3(1f, 2f, -3f), Quaternion.identity, Vector3.one);
         WriteMatrixToFile(translationMatrix, "Translation Matrix", "------------------");
 
-        var imageAfterTranslation = ApplyTransformation(verts, translationMatrix);
+        var imageAfterTranslation = ApplyTransformation(imageAfterScale, translationMatrix);
         WriteVectorsToFile(imageAfterTranslation, "Image after Translation", "------------------");
+
+        Matrix4x4 matrixOfTransformations = translationMatrix * scaleMatrix * rotationMatrix;
+        WriteMatrixToFile(matrixOfTransformations, "Transformation Matrix", "------------------");
+
+        var imageAfterTransformations = ApplyTransformation(verts, matrixOfTransformations);
+        WriteVectorsToFile(imageAfterTransformations, "Image After Transformations", "------------------");
+
+        Matrix4x4 viewingMatrix = Matrix4x4.LookAt(new Vector3(22f, -5f, 45f), new Vector3(-5f, 20f, -5f), new Vector3(-4f, -5f, 20f).normalized);
+        WriteMatrixToFile(viewingMatrix, "Viewing Matrix", "------------------");
+
+        var imageAfterViewing = ApplyTransformation(imageAfterTranslation, viewingMatrix);
+        WriteVectorsToFile(imageAfterViewing, "Image After Viewing Matrix", "------------------");
+
+        Matrix4x4 projectionMatrix = Matrix4x4.Perspective(90, 1, 1, 1000);
+        WriteMatrixToFile(projectionMatrix, "Projection Matrix", "------------------");
+
+        var imageAfterProjection = ApplyTransformation(imageAfterViewing, projectionMatrix);
+        WriteVectorsToFile(imageAfterProjection, "Final Image", "------------------");
+
+        Matrix4x4 matrixOfEverything = projectionMatrix * viewingMatrix * matrixOfTransformations;
+        WriteMatrixToFile(matrixOfEverything, "Matrix of Everything", "------------------");
+
+        var imageAfterEverything = ApplyTransformation(verts, matrixOfEverything);
+        WriteVectorsToFile(imageAfterEverything, "Image After Everything", "------------------");
 
         writer.Close();
     }
