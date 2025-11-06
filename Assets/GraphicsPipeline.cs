@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.IO;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class GraphicsPipeline : MonoBehaviour
@@ -102,5 +103,21 @@ public class GraphicsPipeline : MonoBehaviour
             writer.WriteLine($"({v.x}, {v.y}, {v.z}, {v.w})");
         }
         writer.WriteLine(after);
+    }
+
+    private bool LineClip(ref Vector2 start, ref Vector2 end)
+    {
+        //Test for Trivial Acceptance
+        OutCode startOutCode = new OutCode(start);
+        OutCode endOutCode = new OutCode(end);
+        OutCode inViewport = new OutCode();
+
+        if ((startOutCode + endOutCode) == inViewport) return true;
+
+        //Test for Trivial Rejection
+        if ((startOutCode * endOutCode) != inViewport) return false;
+
+        //Test for Intersection
+        
     }
 }
