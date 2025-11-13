@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using Unity.VisualScripting;
@@ -61,8 +62,20 @@ public class GraphicsPipeline : MonoBehaviour
         WriteVectorsToFile(imageAfterEverything, "Image After Everything", "------------------");
 
         writer.Close();
-    }
 
+        Vector2 s = new Vector2(2, 4);
+        Vector2 e = new Vector2(3, -3);
+        print(Intercept(s, e, 0));
+
+        if (LineClip(ref s, ref e))
+        {
+            print($"Clipped Line Start: {s}, End: {e}");
+        }
+        else
+        {
+            print("Line is outside the viewport");
+        }
+    }
 
     private List<Vector4> ConvertToHOM(List<Vector3> verts3)
     {
@@ -105,19 +118,108 @@ public class GraphicsPipeline : MonoBehaviour
         writer.WriteLine(after);
     }
 
-    private bool LineClip(ref Vector2 start, ref Vector2 end)
+    bool LineClip(ref Vector2 start, ref Vector2 end)
     {
-        //Test for Trivial Acceptance
         OutCode startOutCode = new OutCode(start);
         OutCode endOutCode = new OutCode(end);
         OutCode inViewport = new OutCode();
 
         if ((startOutCode + endOutCode) == inViewport) return true;
 
-        //Test for Trivial Rejection
         if ((startOutCode * endOutCode) != inViewport) return false;
 
-        //Test for Intersection
-        
+        if (startOutCode == inViewport)
+        {
+            return LineClip(ref end, ref start);
+        }
+
+        if (startOutCode.up)
+        {
+            start = Intercept(start, end, 0);
+            return LineClip(ref start, ref end);
+        }
+        else if (startOutCode.down)
+        {
+            start = Intercept(start, end, 1);
+            return LineClip(ref start, ref end);
+        }
+        else if (startOutCode.left)
+        {
+            start = Intercept(start, end, 2);
+            return LineClip(ref start, ref end);
+        }
+        else if (startOutCode.right)
+        {
+            start = Intercept(start, end, 3);
+            return LineClip(ref start, ref end);
+        }
+
+        return true;
+    }
+
+    Vector2 Intercept(Vector2 s, Vector2 e, int edgeIndex)
+    {
+        if (e.x != s.x)
+        {
+            float m = (e.y - s.y) / (e.x - s.x);
+
+            switch (edgeIndex)
+            {
+                case 0:
+                    if (m != 0)
+                    {
+                        return new Vector2(s.x + (1 / m) * (1 - s.y), 1);
+                    }
+                    else
+                    {
+                        if (s.y == 1)
+                            return s;
+                        else
+                            return new Vector2(float.NaN, float.NaN);
+                    }
+                case 1:
+                    if (m != 0)
+                    {
+                        return new Vector2(s.x + (1 / m) * (-1 - s.y), -1);
+                    }
+                    else
+                    {
+                        if (s.y == -1)
+                            return s;
+                        else
+                            return new Vector2(float.NaN, float.NaN);
+                    }
+                case 2:
+                    {
+                        float y = s.y + m * (-1 - s.x);
+                        return new Vector2(-1, y);
+                    }
+                default:
+                    return new Vector2(1, s.y + m * (1 - s.x));
+            }
+        }
+        else
+        {
+            switch (edgeIndex)
+            {
+                case 0:
+                    return new Vector2(s.x, 1);
+
+                case 1:
+                    return new Vector2(s.x, -1);
+
+                case 2:
+                    if (s.x == -1)
+                        return s;
+                    else
+                        return new Vector2(float.NaN, float.NaN);
+
+                default:
+                    if (s.x == 1)
+                        return s;
+                    else
+                        return new Vector2(float.NaN, float.NaN);
+            }
+        }
     }
 }
