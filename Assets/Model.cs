@@ -3,11 +3,11 @@ using UnityEngine;
 
 public class Model
 {
-    private List<Vector2> texture_coordinates;
+    internal List<Vector2> texture_coordinates;
     internal List<Vector3> vertices;
-    private List<Vector3Int> faces;
-    private List<Vector3Int> texture_index_list;
-    private List<Vector3> normals;
+    internal List<Vector3Int> faces;
+    internal List<Vector3Int> texture_index_list;
+    internal List<Vector3> normals;
 
     public Model()
     {
@@ -377,5 +377,4 @@ public class Model
 
         return go;
     }
-
 }
