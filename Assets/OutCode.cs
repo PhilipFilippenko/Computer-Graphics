@@ -55,7 +55,6 @@ public class OutCode
 
     public override string ToString()
     {
-        //return $"Up: {up} Down: {down} Left: {left} Right: {right}";
         return (up ? "1" : "0") + (down ? "1" : "0") + (left ? "1" : "0") + (right ? "1" : "0");
     }
 }
