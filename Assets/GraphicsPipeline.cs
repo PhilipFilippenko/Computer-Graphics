@@ -386,10 +386,9 @@ public class GraphicsPipeline : MonoBehaviour
         fb.Apply();
     }
 
-    void FillTriangleTextured(
-    Vector2 a2, Vector2 b2, Vector2 c2,
-    Vector2 a_t, Vector2 b_t, Vector2 c_t,
-    Texture2D tex, Texture2D fb)
+    void FillTriangleTextured
+        (Vector2 a2, Vector2 b2, Vector2 c2, Vector2 a_t, 
+        Vector2 b_t, Vector2 c_t, Texture2D tex, Texture2D fb)
     {
         Vector2 A = b2 - a2;
         Vector2 B = c2 - a2;
